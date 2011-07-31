@@ -1,0 +1,9 @@
+sf_file_trunk:
+  url: /file/:id
+  param: { module: sfFileTrunk, action: index }
+  requirements: { id: \d+ }
+  
+sf_file_trunk_image:
+  url: /file/image/:id/:width/:height/:method/:quality
+  param: { module: sfFileTrunk, action: image, width: 0, height: 0, method: fit, quality: 75}
+  requirements: { id: \d+ , width: \d+, height: \d+, quality: \d+, method: 'fit|scale|inflate|deflate|left|top|right|bottom|center'}

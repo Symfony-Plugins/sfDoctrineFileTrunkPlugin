@@ -1,0 +1,35 @@
+FileTrunk:
+  actAs: [Timestampable]
+  options:
+    symfony:
+      form:   false
+      filter: false
+  columns:
+    original_name:
+      type: string(255)
+      fixed: false
+      unsigned: false
+      primary: false
+      notnull: true
+      autoincrement: false
+    actual_name:
+      type: string(255)
+      fixed: false
+      unsigned: false
+      primary: false
+      notnull: true
+      autoincrement: false
+    mime_type:
+      type: string(255)
+      fixed: false
+      unsigned: false
+      primary: false
+      notnull: true
+      autoincrement: false
+    size:
+      type: integer()
+      fixed: false
+      unsigned: false
+      primary: false
+      notnull: true
+      autoincrement: false
