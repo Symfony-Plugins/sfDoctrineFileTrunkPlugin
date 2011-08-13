@@ -1,43 +1,47 @@
-= sfDoctrineFileTrunk plugin =
+sfDoctrineFileTrunk plugin
+==========================
 
 The `sfDoctrineFileTrunkPlugin` provides a central point for file uploads and handling.
 Not only does it take care of all of your file uploads but also for content delivery easily implemented
 using partials and components.
 
-== Installation ==
+Installation
+------------
 
 This plugin requires sfImageTransformPlugin.
 If you want to make use of the components and actions of this plugin don't forget to enable the sfDoctrineFileTrunk module in your application settings.yml
 
-== Contents ==
+Contents
+--------
 
 This plugin contains several classes for easy file upload and devlivery.
 
-=== Creating a file upload using sfDoctrineFileTrunkPlugin ===
+*Creating a file upload using sfDoctrineFileTrunkPlugin*
 
 In order to make use of the plugin's functionalities all you basically need to do is to create
 a file input widget in your form and pass the sfValidatedFileTrunk class to the sfValidatorFile.
 
 See for example following form:
-{{{
-class TestForm extends BaseForm
-{
-	public function configure()
+
+	[php]
+	class TestForm extends BaseForm
 	{
-		$this->setWidget('file', new sfWidgetFormInputFile());
-		$this->setValidator('file', new sfValidatorFile(array(
-			'validated_file_class' => 'sfValidatedFileTrunk', 
-			'path' => FileTrunk::getPath()
-		)));
-		
-		$this->getWidgetSchema()->setNameFormat('test[%s]');
+		public function configure()
+		{
+			$this->setWidget('file', new sfWidgetFormInputFile());
+			$this->setValidator('file', new sfValidatorFile(array(
+				'validated_file_class' => 'sfValidatedFileTrunk', 
+				'path' => FileTrunk::getPath()
+			)));
+			
+			$this->getWidgetSchema()->setNameFormat('test[%s]');
+		}
 	}
-}
-}}}
+
 
 It as easy as that. Your action to handle the form could look like the following:
 
-{{{
+	[php]
 	public function executeIndex(sfWebRequest $request)
 	{
 		$this->form = new TestForm();
@@ -53,74 +57,72 @@ It as easy as that. Your action to handle the form could look like the following
 			}
 		}
 	}
-}}}
 
 That's it. Everything else is already done in the background. The file is saved with a unique name and a reference is inserted in the database.
 
 This was just a very simple example. The real use of the plugin comes through if you combine it with your model.
 Take the following schema for example:
 
-{{{
-test_table:
-  columns:
-    id:
-    title:
-      type: string(255)
-      notnull: true
-    file_trunk_id:
-      type: integer
-      fixed: false
-      unsigned: false
-      notnull: true
-  relations:
-    FileTrunk:
-      local: file_trunk_id
-      foreign: id
-      type: one
-      foreignType: one
-      onDelete: CASCADE
-}}}
+	test_table:
+	  columns:
+	    id:
+	    title:
+	      type: string(255)
+	      notnull: true
+	    file_trunk_id:
+	      type: integer
+	      fixed: false
+	      unsigned: false
+	      notnull: true
+	  relations:
+	    FileTrunk:
+	      local: file_trunk_id
+	      foreign: id
+	      type: one
+	      foreignType: one
+	      onDelete: CASCADE
 
 A reference to the file_trunk table is needed so that we can store the file_trunk_id in our table (this table could for example the images table for a gallery).
 Now all you need todo is to change the TestTable's form a little bit like this:
 
-{{{
-class TestTableForm extends BaseTestTableForm
-{
-	public function configure()
+	[php]
+	class TestTableForm extends BaseTestTableForm
 	{
-		// upate the file_trunk_id field to support uploading of files
-		$this->setWidget('file_trunk_id', new sfWidgetFormInputFile());
-		$this->setValidator('file_trunk_id', new sfValidatorFile(array(
-			'validated_file_class' => 'sfValidatedFileTrunk', 
-			'path' => sfConfig::get('sf_upload_dir')
-		)));
-	}
-
-	// update the file_trunk_id column with the appropriate id value
-	public function updateFileTrunkIdColumn($value)
-	{
-		if ($value)
+		public function configure()
 		{
-			$value->save();
-			return $value->getFileTrunk()->getId();
+			// upate the file_trunk_id field to support uploading of files
+			$this->setWidget('file_trunk_id', new sfWidgetFormInputFile());
+			$this->setValidator('file_trunk_id', new sfValidatorFile(array(
+				'validated_file_class' => 'sfValidatedFileTrunk', 
+				'path' => sfConfig::get('sf_upload_dir')
+			)));
 		}
-		return false;
-	}
 
-}
-}}}
+		// update the file_trunk_id column with the appropriate id value
+		public function updateFileTrunkIdColumn($value)
+		{
+			if ($value)
+			{
+				$value->save();
+				return $value->getFileTrunk()->getId();
+			}
+			return false;
+		}
+
+	}
 
 And voila! You have now enabled file upload with reference to the file trunk in your model.
 
-=== Content delivery with sfDoctrineFileTrunkPlugin ===
+Content delivery with sfDoctrineFileTrunkPlugin
+-----------------------------------------------
+
 To put out content is very easy. You can put out content with two components:
 
-{{{
-<?php include_component('sfFileTrunk', 'filetrunk_file', array('id' => 1)); ?>
-<hr/>
-<?php include_component('sfFileTrunk', 'filetrunk_image', array('id' => 1, 'width' => 100)); ?>
-}}}
+	[php]
+	<?php include_component('sfFileTrunk', 'filetrunk_file', array('id' => 1)); ?>
+	<hr/>
+	<?php include_component('sfFileTrunk', 'filetrunk_image', array('id' => 1, 'width' => 100)); ?>
+
 
 The filetrunk_image component supports thumbnailing of images. Minimum parameters to be passed so that it works is the width parameter.
 Since the plugin uses the sfImageTransformPlugin you may also provide the following paramters to the image component:
@@ -131,3 +133,10 @@ quality: the quality of the thumbnail (default is 75)
 
 NOTE: When not in the dev environment new thumbnail generation is limited to a 30 minutes interval.
 That means if you already generated a thumbnail of 30x30 you will have to wait another 30 minutes before you can generate a thumbnail with 40x40.
+
+Sponsor
+-------
+
+This plugin is sponsored by [Tremend Software Consulting](http://www.tremend.ro/)
+
+ [![Tremend Software Consulting](http://www.tremend.ro/sites/all/themes/tremend/images/logo.png)](http://www.tremend.ro/)
