@@ -8,6 +8,14 @@ using partials and components.
 Installation
 ------------
 
+  * Install the plugin (via a package)
+
+        symfony plugin:install sfDoctrineFileTrunkPlugin
+
+  * Install the plugin (via a Subversion checkout)
+  
+        svn co http://svn.symfony-project.com/plugins/sfDoctrineFileTrunkPlugin/trunk
+
 This plugin requires sfImageTransformPlugin.
 If you want to make use of the components and actions of this plugin don't forget to enable the sfDoctrineFileTrunk module in your application settings.yml
 
